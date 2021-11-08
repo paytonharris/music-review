@@ -1,0 +1,11 @@
+.albumGrid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.albumResult {
+  margin: 10px;
+  max-width: 25%;
+}
