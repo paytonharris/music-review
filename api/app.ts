@@ -14,16 +14,46 @@ if (!spotifyBasicAuthToken) {
 var app = express();
 app.use(cors());
 
+type SpotifyGetRequest = (request: Request, response: Response, spotifyBearerAuthToken: string) => Promise<number>;
+
 var spotifyBearerAuthToken = "";
 
-getBearerToken(spotifyBasicAuthToken)
-  .then(token => {
-    if (token) spotifyBearerAuthToken = token;
-  })
-  .catch(error => console.error(error))
+const refreshBearerToken = async () => {
+  try {
+    const newToken = await getBearerToken(spotifyBasicAuthToken)
+    if (newToken) {
+      spotifyBearerAuthToken = newToken;
+      return newToken;
+    }
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
 
-app.get('/albums', (request: Request, response: Response) => getAlbums(request, response, spotifyBearerAuthToken));
+// this function will attempt a spotify request that you give it, and if the auth token expired, refreshes it and tries the request again.
+const makeSpotifyRequest = async (request: Request, response: Response, requestFunction: SpotifyGetRequest) => {
+  try {
+    const requestStatusCode = await requestFunction(request, response, spotifyBearerAuthToken);
 
+    if (requestStatusCode == 401) {
+      console.log(`401 received, token = ${spotifyBearerAuthToken}`)
+      const newToken = await refreshBearerToken()
+  
+      if (newToken) {
+        console.log(`retrying. token = ${spotifyBearerAuthToken}`)
+        requestFunction(request, response, newToken);
+      }
+    }
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+app.get('/albums', (request: Request, response: Response) => makeSpotifyRequest(request, response, getAlbums));
+
+refreshBearerToken();
 var port = process.env.PORT || 5000;
 
 var server = app.listen(port, function () {

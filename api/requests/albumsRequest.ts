@@ -15,42 +15,52 @@ interface ImageLink {
 }
 
 export const getAlbums = async (request: Request, response: Response, spotifyBearerAuthToken: string) => {
-  const albumQuery = request.query.q
+  let responseCode = 0;
 
-  console.log(albumQuery);
-  console.log(spotifyBearerAuthToken);
+  try {
+    const albumQuery = request.query.q
 
-  const url = `https://api.spotify.com/v1/search?q=${albumQuery}&type=album&limit=10`;
+    console.log(albumQuery);
+    console.log(spotifyBearerAuthToken);
 
-  const spotifyResponse = await axios.get(url, {
-    headers: {
-    'Authorization': `Bearer ${spotifyBearerAuthToken}`,
-  }});
+    const url = `https://api.spotify.com/v1/search?q=${albumQuery}&type=album&limit=10`;
 
-  let data = await spotifyResponse.data
+    const spotifyResponse = await axios.get(url, {
+      headers: {
+      'Authorization': `Bearer ${spotifyBearerAuthToken}`,
+    }});
 
-  let albums: AlbumResult[] = [];
-  if (data.albums?.items) {
+    responseCode = spotifyResponse.status;
 
-    const mediumSizedImageIndex = 1;
+    let data = spotifyResponse.data
 
-    for (let i = 0; i < data.albums?.items?.length; i++) {
+    let albums: AlbumResult[] = [];
+    if (data.albums?.items) {
 
-      const artist = data.albums?.items[i]?.artists[0]?.name || 'Unknown Artist';
-      const album = data.albums?.items[i]?.name || 'Unknown Album';
-      const id = data.albums?.items[i]?.id || 'idnotfound'; // TODO: make 'idnotfound' a randomly generated string of characters and numbers.
-      const image = data.albums?.items[i]?.images[mediumSizedImageIndex] || undefined;
+      const mediumSizedImageIndex = 1;
 
-      albums.push({
-        albumName: album,
-        artistName: artist,
-        id,
-        image,
-      });
+      for (let i = 0; i < data.albums?.items?.length; i++) {
+
+        const artist = data.albums?.items[i]?.artists[0]?.name || 'Unknown Artist';
+        const album = data.albums?.items[i]?.name || 'Unknown Album';
+        const id = data.albums?.items[i]?.id || 'idnotfound'; // TODO: make 'idnotfound' a randomly generated string of characters and numbers.
+        const image = data.albums?.items[i]?.images[mediumSizedImageIndex] || undefined;
+
+        albums.push({
+          albumName: album,
+          artistName: artist,
+          id,
+          image,
+        });
+      }
+
+      response.status(200).json(albums);
     }
-
-    response.status(200).json(albums);
-  } else {
-    response.status(500).send('Something went wrong. Please try again later.');
+  }
+  catch (error) {
+    console.error(error);
+  }
+  finally {
+    return responseCode;
   }
 };
