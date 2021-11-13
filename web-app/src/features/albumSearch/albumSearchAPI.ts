@@ -1,4 +1,3 @@
-import { nanoid } from "@reduxjs/toolkit";
 import { AlbumResult } from "./albumSearchSlice";
 
 export async function searchAlbumsViaSpotify(searchText = '') {
@@ -7,33 +6,13 @@ export async function searchAlbumsViaSpotify(searchText = '') {
       return Promise.reject('No search value was provided.');
     }
 
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchText)}&type=album&limit=10`
+    const url = `http://localhost:5000/albums?q=${encodeURIComponent(searchText)}`
 
-    const response = await fetch(url, {
-        headers: {
-        'Authorization': 'Bearer TOKEN_HERE',
-      }}
-    )
+    const response = await fetch(url);
     let data = await response.json()
-    if (response.ok && data.albums?.items) {
+    if (response.ok && data) {
 
-      let albums: AlbumResult[] = []
-      const mediumSizedImageIndex = 1;
-
-      for (let i = 0; i < data.albums?.items?.length; i++) {
-
-        const artist = data.albums?.items[i]?.artists[0]?.name || 'Unknown Artist';
-        const album = data.albums?.items[i]?.name || 'Unknown Album';
-        const id = data.albums?.items[i]?.id || nanoid();
-        const image = data.albums?.items[i]?.images[mediumSizedImageIndex] || undefined
-
-        albums.push({
-          albumName: album,
-          artistName: artist,
-          id,
-          image,
-        });
-      }
+      let albums: AlbumResult[] = data;
 
       return albums;
     }
