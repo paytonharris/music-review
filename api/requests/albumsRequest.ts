@@ -57,7 +57,11 @@ export const getAlbums = async (request: Request, response: Response, spotifyBea
       response.status(200).json(albums);
     }
   }
-  catch (error) {
+  catch (error: any) {
+    if (error.response) {
+      responseCode = error.response.status;
+    }
+
     console.error(error);
   }
   finally {
