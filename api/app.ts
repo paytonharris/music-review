@@ -52,6 +52,7 @@ const makeSpotifyRequest = async (request: Request, response: Response, requestF
 }
 
 app.get('/albums', (request: Request, response: Response) => makeSpotifyRequest(request, response, getAlbums));
+app.get('/', (request: Request, response: Response) => response.status(200).send('ok'));
 
 refreshBearerToken();
 var port = process.env.PORT || 5000;
