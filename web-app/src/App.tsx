@@ -1,15 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
 import { AlbumSearch } from './features/albumSearch/AlbumSearch';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
 import './App.css';
+import { AlbumReview } from './features/albumReview/AlbumReview';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <AlbumSearch />
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="App-header">
+                <AlbumSearch />
+              </div>
+            }
+          />
+          <Route path="/album/:albumId" element={<AlbumReview />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

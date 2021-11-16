@@ -8,4 +8,5 @@
 .albumResult {
   margin: 10px;
   max-width: 25%;
+  min-width: 300px;
 }

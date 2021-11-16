@@ -37,10 +37,9 @@ export const searchAlbums = createAsyncThunk(
 export const selectAlbumSearchResults = (state: RootState) => state.albumSearch.results;
 
 export const albumSearch = createSlice({
-  name: 'counter',
+  name: 'search',
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(searchAlbums.pending, (state) => {

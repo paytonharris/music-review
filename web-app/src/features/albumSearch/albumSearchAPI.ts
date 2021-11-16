@@ -6,7 +6,7 @@ export async function searchAlbumsViaSpotify(searchText = '') {
       return Promise.reject('No search value was provided.');
     }
 
-    const url = `http://localhost:5000/albums?q=${encodeURIComponent(searchText)}`
+    const url = `http://musicreviewapi-env.eba-zpuuemc2.us-east-1.elasticbeanstalk.com/albums?q=${encodeURIComponent(searchText)}`
 
     const response = await fetch(url);
     let data = await response.json()

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { Link } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   searchAlbums,
@@ -35,13 +35,14 @@ export function AlbumSearch() {
         />
         <input value='Search' type='submit' />
       </form>
-      {albumSearchResults.length > 0 ? <label>Results:</label> : null}
       <div className={styles.albumGrid}>
         {albumSearchResults.map(albumResult => {
           return (
             <div className={styles.albumResult} id={albumResult.id}>
-              <p>{albumResult.artistName} - {albumResult.albumName}</p>
-              <img alt='album cover' src={albumResult?.image?.url}></img>
+              <Link to={`album/${albumResult.id}`}>
+                <p>{albumResult.artistName} - {albumResult.albumName}</p>
+                <img alt='album cover' src={albumResult?.image?.url}></img>
+              </Link>
             </div>
           )
         })}
