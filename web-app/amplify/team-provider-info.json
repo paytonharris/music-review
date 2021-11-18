@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-musicreviewweb-dev-214607-authRole",
+      "UnauthRoleArn": "arn:aws:iam::766502623528:role/amplify-musicreviewweb-dev-214607-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::766502623528:role/amplify-musicreviewweb-dev-214607-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-musicreviewweb-dev-214607-deployment",
+      "UnauthRoleName": "amplify-musicreviewweb-dev-214607-unauthRole",
+      "StackName": "amplify-musicreviewweb-dev-214607",
+      "StackId": "arn:aws:cloudformation:us-east-1:766502623528:stack/amplify-musicreviewweb-dev-214607/afe5fbb0-4819-11ec-ad7a-0e892388aa03",
+      "AmplifyAppId": "dbfxclc11u1dx"
+    }
+  }
+}
