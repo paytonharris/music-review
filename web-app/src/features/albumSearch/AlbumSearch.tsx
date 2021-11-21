@@ -26,6 +26,7 @@ export function AlbumSearch() {
 
   return (
     <div>
+      <Link to="/SignUp">Sign Up / Log In</Link>
       <p>Albums</p>
       <form onSubmit={handleSubmit}>
         <input
