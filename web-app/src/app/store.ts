@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import albumSearchReducer from '../features/albumSearch/albumSearchSlice';
+import signUpReducer from '../features/signUp/signUpSlice';
 
 export const store = configureStore({
   reducer: {
     albumSearch: albumSearchReducer,
+    signUpSlice: signUpReducer
   },
 });
 

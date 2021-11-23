@@ -10,6 +10,11 @@
       "StackName": "amplify-musicreviewweb-dev-214607",
       "StackId": "arn:aws:cloudformation:us-east-1:766502623528:stack/amplify-musicreviewweb-dev-214607/afe5fbb0-4819-11ec-ad7a-0e892388aa03",
       "AmplifyAppId": "dbfxclc11u1dx"
+    },
+    "categories": {
+      "auth": {
+        "musicreviewwebb797484d": {}
+      }
     }
   }
 }
