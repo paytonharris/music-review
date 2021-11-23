@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { signUpWithAmplify } from './SignUpAPI';
-import { CognitoUser } from '@aws-amplify/auth'
 
 export interface NewUserSignUpDetails {
   email: string;
@@ -11,15 +10,12 @@ export interface NewUserSignUpDetails {
 
 export interface SignUpState {
   status: 'initial' | 'succeeded' | 'loading' | 'failed';
-  user?: { 
-    cognitoUser: CognitoUser,
-    userSub: string,
-  };
+  loginEmail?: string;
 }
 
 const initialState: SignUpState = {
   status: 'initial',
-  user: undefined,
+  loginEmail: undefined,
 };
 
 export const signUp = createAsyncThunk(
@@ -31,13 +27,17 @@ export const signUp = createAsyncThunk(
   }
 );
 
-export const selectUser = (state: RootState) => state.signUpSlice.user;
 export const selectSignUpState = (state: RootState) => state.signUpSlice.status;
+export const selectLoginEmail = (state: RootState) => state.signUpSlice.loginEmail;
 
 export const signUpSlice = createSlice({
   name: 'authenticate',
   initialState,
-  reducers: {},
+  reducers: {
+    setLoginEmail: (state, action: PayloadAction<string>) => {
+      state.loginEmail = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signUp.pending, (state) => {
@@ -48,9 +48,10 @@ export const signUpSlice = createSlice({
       })
       .addCase(signUp.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload;
       });
   }
 });
+
+export const { setLoginEmail } = signUpSlice.actions;
 
 export default signUpSlice.reducer;

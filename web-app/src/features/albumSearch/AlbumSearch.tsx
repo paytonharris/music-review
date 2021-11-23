@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { Auth } from 'aws-amplify';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   searchAlbums,
@@ -7,10 +8,16 @@ import {
 } from './albumSearchSlice';
 import styles from './AlbumSearch.module.css';
 
+interface CurrentUser {
+  user?: any
+  loadingState: 'loading' | 'success' | 'failure'
+}
+
 export function AlbumSearch() {
   const dispatch = useAppDispatch();
   const albumSearchResults = useAppSelector(selectAlbumSearchResults);
   const [searchInput, setSearchInput] = useState('');
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({ loadingState: 'loading' })
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value);
@@ -24,9 +31,39 @@ export function AlbumSearch() {
     }
   }
 
+  const getUser = async () => {
+    try {
+      if (currentUser.loadingState !== 'loading') {
+        setCurrentUser({ loadingState: 'loading' })
+      }
+
+      const userInfo = await Auth.currentUserInfo();
+
+      setCurrentUser({ user: userInfo, loadingState: 'success' })
+    }
+    catch (error) {
+      console.error(error);
+      setCurrentUser({ loadingState: 'failure' })
+    }
+  }
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
   return (
     <div>
-      <Link to="/SignUp">Sign Up / Log In</Link>
+      {currentUser.user ? 
+        <div>
+          <p>hello user!</p>
+          <p>{JSON.stringify(currentUser)}</p>
+        </div>
+      :
+        <div>
+          <Link to="/SignUp">Sign Up</Link>
+          <Link to="/LogIn">Log In</Link>
+        </div>
+      }
       <p>Albums</p>
       <form onSubmit={handleSubmit}>
         <input

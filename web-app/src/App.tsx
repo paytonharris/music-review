@@ -10,6 +10,8 @@ import {
 import './App.css';
 import { AlbumReview } from './features/albumReview/AlbumReview';
 import { SignUp } from './features/signUp/SignUp';
+import { SignIn } from './features/signIn/SignIn';
+import { Verify } from './features/verify/Verify';
 
 Amplify.configure(aws_exports);
 
@@ -27,7 +29,9 @@ function App() {
             }
           />
           <Route path="/album/:albumId" element={<AlbumReview />} />
-          <Route path="/SignUp" element={<SignUp />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/verify" element={<Verify />} />
         </Routes>
       </div>
     </Router>

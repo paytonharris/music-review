@@ -8,7 +8,7 @@ export async function signUpWithAmplify(signUpDetails: NewUserSignUpDetails) {
     if (signUpDetails.email.length === 0 ||
       signUpDetails.password.length === 0 ||
       signUpDetails.name.length === 0) {
-      return Promise.reject('No search value was provided.');
+      return Promise.reject('No sign up info was provided.');
     }
 
     const response = await Auth.signUp({

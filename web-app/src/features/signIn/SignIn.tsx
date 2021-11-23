@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import {
-  signUp,
-  selectSignUpState,
-  setLoginEmail,
-} from './signUpSlice';
-import styles from './SignUp.module.css';
+import { Auth } from "aws-amplify";
+import styles from './SignIn.module.css';
 
-export function SignUp() {
+type SignInState = 'initial' | 'loading' | 'succeeded' | 'failed';
+
+export function SignIn() {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [signInState, setSignInState] = useState<SignInState>('initial');
 
-  const signUpState = useAppSelector(selectSignUpState);
   let navigate = useNavigate()
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,60 +22,53 @@ export function SignUp() {
     setPassword(event.target.value);
   }
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  const signIn = async (email: string, password: string) => {
+    setSignInState('loading');
+    try {
+      await Auth.signIn(email, password);
+
+      setSignInState('succeeded');
+    } catch (error) {
+      setSignInState('failed');
+      console.error('error confirming sign up', error);
+    }
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
-    if (email.length > 0 && 
-      password.length > 0 &&
-      name.length > 0) {
-
-        dispatch(signUp({
-          email,
-          password,
-          name
-        }))
-
-        dispatch(setLoginEmail(email))
+    if (email.length > 0 && password.length > 0) {
+      signIn(email, password);
     }
     else {
       // show an error that there's empty boxes.
     }
   }
 
-  if (signUpState === "succeeded") {
-    navigate('/verify');
+  if (signInState === 'succeeded') {
+    navigate('/');
   }
 
   return (
     <div>
       <Link to="/">Back</Link>
-      <p>Sign Up, yo</p>
+      <p>Sign In</p>
       <form onSubmit={handleSubmit}>
-        <p>Name</p>
-        <input
-          type="text"
-          value={name}
-          onChange={handleNameChange}
-        />
         <p>Email</p>
         <input
-          type="text"
+          type="email"
           value={email}
           onChange={handleEmailChange}
         />
         <p>Password</p>
         <input
-          type="text"
+          type="password"
           value={password}
           onChange={handlePasswordChange}
         />
         <input value='Sign Up' type='submit' />
       </form>
-      <p>{signUpState}</p>
+      <p>{signInState}</p>
     </div>
   );
 }
