@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
 import { useAppSelector } from '../../app/hooks';
 import {
   selectAlbumInfo,
@@ -14,9 +13,6 @@ export function AlbumReview() {
 
   return (
     <div className={styles.main}>
-      <Link to="/" className={styles.backButton}>
-        <h3>{"< Albums"}</h3>
-      </Link>
       {album && 
       <div className={styles.albumInfo}>
         <h2>{album.artistName}</h2>

@@ -14,6 +14,7 @@ import { AlbumReview } from './features/albumReview/AlbumReview';
 import { SignUp } from './features/signUp/SignUp';
 import { SignIn } from './features/signIn/SignIn';
 import { Verify } from './features/verify/Verify';
+import { Home } from './features/home/Home';
 
 Amplify.configure(aws_exports);
 
@@ -50,14 +51,8 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="App-header">
-                <AlbumSearch />
-              </div>
-            }
-          />
+          <Route path="/" element={<Home />} />
+          <Route path="/search/:query" element={<AlbumSearch />} />
           <Route path="/album/:albumId" element={<AlbumReview />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<SignIn />} />
