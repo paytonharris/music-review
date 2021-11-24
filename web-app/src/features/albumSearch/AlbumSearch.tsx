@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Auth } from 'aws-amplify';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
@@ -7,17 +7,13 @@ import {
   selectAlbumSearchResults,
 } from './albumSearchSlice';
 import styles from './AlbumSearch.module.css';
-
-interface CurrentUser {
-  user?: any
-  loadingState: 'loading' | 'success' | 'failure'
-}
+import { selectUserInfo } from '../../authSlice';
 
 export function AlbumSearch() {
   const dispatch = useAppDispatch();
   const albumSearchResults = useAppSelector(selectAlbumSearchResults);
+  const userInfo = useAppSelector(selectUserInfo);
   const [searchInput, setSearchInput] = useState('');
-  const [currentUser, setCurrentUser] = useState<CurrentUser>({ loadingState: 'loading' })
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value);
@@ -31,47 +27,23 @@ export function AlbumSearch() {
     }
   }
 
-  const getUser = async () => {
-    try {
-      if (currentUser.loadingState !== 'loading') {
-        setCurrentUser({ loadingState: 'loading' })
-      }
-
-      const userInfo = await Auth.currentUserInfo();
-
-      setCurrentUser({ user: userInfo, loadingState: 'success' })
-    }
-    catch (error) {
-      console.error(error);
-      setCurrentUser({ loadingState: 'failure' })
-    }
-  }
-
-  const onPressSignOut = () => {
+  const onClickSignOut = () => {
     try {
       Auth.signOut();
     }
     catch (error) {
       console.error(error)
     }
-    finally {
-      getUser(); // update screen to show that no one is logged in. 
-    }
   }
-
-  useEffect(() => {
-    getUser()
-  }, [])
 
   return (
     <div>
-      {currentUser.user?.username ? 
+      {userInfo?.name ? 
         <div>
-          <p>hello user!</p>
-          <p>{JSON.stringify(currentUser)}</p>
-          <button onClick={onPressSignOut}>Log out</button>
+          <p>{`Hello, ${userInfo.name?.split(' ')[0] || 'user'}!`}</p>
+          <button onClick={onClickSignOut}>Log out</button>
         </div>
-      : (currentUser.loadingState === 'loading' ?
+      : (userInfo.status === 'loading' || userInfo.status === 'initial' ?
         <div>
           <p>loading...</p>
         </div>

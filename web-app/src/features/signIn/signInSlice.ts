@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../../app/store';
+import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
 
 export interface SignInState {
 }
@@ -12,9 +12,7 @@ export const selectSignInState = (state: RootState) => state.signUpSlice.status;
 export const signUpSlice = createSlice({
   name: 'signIn',
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-  }
+  reducers: {}
 });
 
 export default signUpSlice.reducer;

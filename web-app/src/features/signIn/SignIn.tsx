@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { Auth } from "aws-amplify";
 import styles from './SignIn.module.css';
 
 type SignInState = 'initial' | 'loading' | 'succeeded' | 'failed';
 
 export function SignIn() {
-  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signInState, setSignInState] = useState<SignInState>('initial');
