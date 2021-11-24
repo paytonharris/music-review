@@ -66,7 +66,7 @@ export function SignIn() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <input value='Sign Up' type='submit' />
+        <input value='Sign In' type='submit' />
       </form>
       <p>{signInState}</p>
     </div>

@@ -47,22 +47,40 @@ export function AlbumSearch() {
     }
   }
 
+  const onPressSignOut = () => {
+    try {
+      Auth.signOut();
+    }
+    catch (error) {
+      console.error(error)
+    }
+    finally {
+      getUser(); // update screen to show that no one is logged in. 
+    }
+  }
+
   useEffect(() => {
     getUser()
   }, [])
 
   return (
     <div>
-      {currentUser.user ? 
+      {currentUser.user?.username ? 
         <div>
           <p>hello user!</p>
           <p>{JSON.stringify(currentUser)}</p>
+          <button onClick={onPressSignOut}>Log out</button>
         </div>
-      :
+      : (currentUser.loadingState === 'loading' ?
+        <div>
+          <p>loading...</p>
+        </div>
+        :
         <div>
           <Link to="/SignUp">Sign Up</Link>
           <Link to="/LogIn">Log In</Link>
         </div>
+      )
       }
       <p>Albums</p>
       <form onSubmit={handleSubmit}>

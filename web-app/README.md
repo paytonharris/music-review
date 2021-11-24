@@ -4,7 +4,7 @@ This is a React/Redux/TypeScript app for reviewing albums. It uses the Spotify A
 
 # To Do (Features)
 
-- Create an account
+- ~~Create an account~~
 - Create a review
 - ~~Search albums~~
 - Security rules for editing/deleting album reviews
