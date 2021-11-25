@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { Auth } from 'aws-amplify';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
   searchAlbums,
@@ -15,6 +15,7 @@ export function AlbumSearch() {
   const albumSearchResults = useAppSelector(selectAlbumSearchResults);
   const userInfo = useAppSelector(selectUserInfo);
   const { query } = useParams();
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState(decodeURIComponent(query || ''));
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +27,7 @@ export function AlbumSearch() {
     
     if (searchInput.length > 0) {
       dispatch(searchAlbums(searchInput));
+      navigate(`/search/${encodeURIComponent(searchInput)}`);
     }
   }
 
@@ -37,12 +39,15 @@ export function AlbumSearch() {
       console.error(error)
     }
   }
-  
+
   useEffect(() => {
-    if (searchInput && searchInput.length && searchInput.length > 0) {
-      dispatch(searchAlbums(searchInput));
+    const searchText = decodeURIComponent(query || '');
+
+    if (searchText.length > 0) {
+      dispatch(searchAlbums(searchText));
+      setSearchInput(searchText)
     }
-  }, [])
+  }, [query])
 
   return (
     <div className={styles.container}>

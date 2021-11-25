@@ -4,15 +4,21 @@ import {
   selectAlbumInfo,
 } from './albumReviewSlice';
 import styles from './AlbumReview.module.css';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function AlbumReview() {
   const { albumId } = useParams();
+  const navigate = useNavigate();
 
   const album = useAppSelector(state => selectAlbumInfo(state, albumId ?? ""))
 
+  const goBack = () => {
+    navigate(-1)
+  }
+
   return (
     <div className={styles.main}>
+      <button onClick={goBack}>{"< Albums"}</button>
       {album && 
       <div className={styles.albumInfo}>
         <h2>{album.artistName}</h2>

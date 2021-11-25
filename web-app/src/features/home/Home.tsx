@@ -22,10 +22,6 @@ export function Home() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
-    // if (searchInput.length > 0) {
-    //   dispatch(searchAlbums(searchInput));
-    // }
 
     navigate(`/search/${encodeURIComponent(searchInput)}`);
   }
