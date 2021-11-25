@@ -1,0 +1,12 @@
+type Review @model @auth(rules: [
+  { allow: public, operations: [read]}
+  { allow: owner }]) {
+  id: ID!
+  date: Int!
+  title: String
+  body: String
+  rating: Int
+  albumName: String
+  artistName: String
+  albumID: String
+}
