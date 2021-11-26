@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Amplify, { Hub, Auth } from 'aws-amplify';
+import Amplify, { Hub, Auth, DataStore } from 'aws-amplify';
 import aws_exports from './aws-exports';
 import { AlbumSearch } from './features/albumSearch/AlbumSearch';
 import {
@@ -28,7 +28,19 @@ function App() {
 
   const listener = (data: any) => {
     console.log(`${data.payload?.event} event`);
+    if (data.payload.event === 'signOut') {
+      // clearDataStore();
+    }
     refreshUserInfo();
+  }
+
+  const clearDataStore = async () => {
+    try {
+      await DataStore.clear();
+    }
+    catch (error) {
+      console.error(error);
+    }
   }
 
   const refreshUserInfo = async () => {

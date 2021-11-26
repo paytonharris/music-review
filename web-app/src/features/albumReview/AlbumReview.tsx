@@ -7,6 +7,7 @@ import styles from './AlbumReview.module.css';
 import { useParams, useNavigate } from "react-router-dom";
 import { DataStore } from '@aws-amplify/datastore';
 import { Review } from '../../models/index';
+import { selectUserInfo } from '../../authSlice';
 
 export function AlbumReview() {
   const { albumId } = useParams();
@@ -14,6 +15,7 @@ export function AlbumReview() {
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
   const album = useAppSelector(state => selectAlbumInfo(state, albumId ?? ""))
+  const userInfo = useAppSelector(selectUserInfo);
 
   const getPreviousReviews = async () => {
     try {
@@ -25,8 +27,23 @@ export function AlbumReview() {
     }
   }
 
+  const getFilteredPreviousReviews = async () => {
+    try {
+      const previewReviews = await DataStore.query(Review, c => 
+        c.albumID("eq", album?.id || ''),
+        {
+          sort: s => s.date("DESCENDING")
+        }
+      );
+      console.log("Filtered posts retrieved successfully!", JSON.stringify(previewReviews, null, 2));
+    } catch (error) {
+      console.log("Error retrieving posts", error);
+    }
+  }
+
   useEffect(() => {
     getPreviousReviews();
+    getFilteredPreviousReviews();
   }, [])
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,19 +59,26 @@ export function AlbumReview() {
   }
 
   const saveReview = async () => {
-    try {
-      await DataStore.save(
-        new Review({
-          date: (new Date()).getDate(),
-          body: reviewText,
-          albumID: albumId,
-          albumName: album?.albumName,
-          artistName: album?.artistName,
-        })
-      );
-      console.log("Post saved successfully!");
-    } catch (error) {
-      console.log("Error saving post", error);
+
+    if (userInfo.id) {
+      try {
+        await DataStore.save(
+          new Review({
+            date: (new Date()).getTime(),
+            body: reviewText,
+            albumID: albumId,
+            albumName: album?.albumName,
+            artistName: album?.artistName,
+            userID: userInfo.id,
+          })
+        );
+        console.log("Post saved successfully!");
+      } catch (error) {
+        console.log("Error saving post", error);
+      }
+    }
+    else {
+      console.log("user is not logged in, could not save.")
     }
   }
 

@@ -11,6 +11,7 @@ type ReviewMetaData = {
 export declare class Review {
   readonly id: string;
   readonly date: number;
+  readonly userID: string;
   readonly title?: string;
   readonly body?: string;
   readonly rating?: number;
