@@ -48,7 +48,7 @@ export const getAlbumInfo = async (request: Request, response: Response, spotify
         const id = data.albums[i]?.id || 'idnotfound'; // TODO: make 'idnotfound' a randomly generated string of characters and numbers.
         const image = data.albums[i]?.images[mediumSizedImageIndex] || undefined;
         const largeImage = data.albums[i]?.images[largeSizedImageIndex] || undefined;
-        const releaseDate = data.albums[i]?.releaseDate || undefined;
+        const releaseDate = data.albums[i]?.release_date || undefined;
 
         albums.push({
           albumName: album,
