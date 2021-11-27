@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from '../../app/hooks';
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import {
   selectLoginEmail,
 } from '../signUp/signUpSlice';
 import styles from './Verify.module.css';
+import { createUser } from '../../graphql/mutations';
 
 type VerificationState = 'initial' | 'loading' | 'succeeded' | 'failed';
 
@@ -22,10 +23,39 @@ export function Verify() {
     try {
       await Auth.confirmSignUp(email, code);
 
+      addUserToUsersTable()
+
       setVerificationState('succeeded');
     } catch (error) {
       setVerificationState('failed');
       console.error('error confirming sign up', error);
+    }
+  }
+
+  const addUserToUsersTable = async () => {
+    try {
+      const user = await Auth.currentUserInfo()
+  
+      const userID = user?.attributes?.sub;
+      const name = user?.attributes?.name;
+
+      if (userID && name) {
+        await API.graphql({
+          query: createUser,
+          variables: { input: {
+            name: name,
+            userID: userID,
+            joinDate: (new Date()).toISOString()
+          } },
+          authMode: "AMAZON_COGNITO_USER_POOLS"
+        })
+        console.log("User created successfully!");
+      }
+      else {
+        console.log("could not create user. UserID and name did not exist.")
+      }
+    } catch (error) {
+      console.log("Error creating user", error);
     }
   }
 

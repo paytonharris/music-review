@@ -41,7 +41,14 @@
               "description": "AlbumLinerAPIKey"
             }
           },
-          "additionalAuthenticationProviders": []
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authmusicreviewwebb797484d"
+              }
+            }
+          ]
         }
       }
     }

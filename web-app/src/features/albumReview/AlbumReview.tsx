@@ -6,8 +6,11 @@ import {
 import styles from './AlbumReview.module.css';
 import { useParams, useNavigate } from "react-router-dom";
 import { DataStore } from '@aws-amplify/datastore';
+import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { Review } from '../../models/index';
 import { selectUserInfo } from '../../authSlice';
+import { createReview } from '../../graphql/mutations';
+import { listReviews, searchReviews } from '../../graphql/queries';
 
 export function AlbumReview() {
   const { albumId } = useParams();
@@ -19,31 +22,55 @@ export function AlbumReview() {
 
   const getPreviousReviews = async () => {
     try {
-      const previewReviews = await DataStore.query(Review);
-      console.log("Posts retrieved successfully!", JSON.stringify(previewReviews, null, 2));
-      setReviews(previewReviews);
+      var reviews = await API.graphql(graphqlOperation(listReviews))
+
+      console.log("Posts retrieved successfully!", JSON.stringify(reviews, null, 2));
     } catch (error) {
-      console.log("Error retrieving posts", error);
+      console.log("Error fetching reviews", error);
     }
   }
 
   const getFilteredPreviousReviews = async () => {
     try {
-      const previewReviews = await DataStore.query(Review, c => 
-        c.albumID("eq", album?.id || ''),
-        {
-          sort: s => s.date("DESCENDING")
-        }
-      );
-      console.log("Filtered posts retrieved successfully!", JSON.stringify(previewReviews, null, 2));
+      var reviews = await API.graphql({
+        query: searchReviews,
+        variables: { filter: { albumID: { match: albumId } } }
+      })
+
+      console.log("Searched matching albums", JSON.stringify(reviews, null, 2));
     } catch (error) {
-      console.log("Error retrieving posts", error);
+      console.log("Error fetching reviews", error);
     }
   }
 
+  const getReviewsByAlbumID = async () => {
+    const filter = { albumID: { eq: albumId } }
+
+    try {
+      var reviews = await API.graphql({
+        query: listReviews,
+        variables: { filter: filter }
+      })
+
+      console.log("Searched matching albums", JSON.stringify(reviews, null, 2));
+    } catch (error) {
+      console.log("Error fetching reviews", error);
+    }
+  }
+
+  const getUser = async () => {
+    const user = await Auth.currentUserInfo()
+
+    const userID = user?.attributes?.sub;
+    const name = user?.attributes?.name;
+  }
+
   useEffect(() => {
-    getPreviousReviews();
-    getFilteredPreviousReviews();
+    // getPreviousReviews();
+    // getFilteredPreviousReviews();
+    getReviewsByAlbumID();
+
+    getUser();
   }, [])
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,24 +81,28 @@ export function AlbumReview() {
     event.preventDefault();
     
     if (reviewText.length > 0) {
-      saveReview();
+      saveReviewRemotely();
     }
   }
 
-  const saveReview = async () => {
+  const saveReviewRemotely = async () => {
+    const newReview = {
+      date: (new Date()).toISOString(),
+      body: reviewText,
+      albumID: albumId,
+      albumName: album?.albumName,
+      artistName: album?.artistName,
+      userID: userInfo.id,
+      reviewerName: userInfo.name
+    }
 
     if (userInfo.id) {
       try {
-        await DataStore.save(
-          new Review({
-            date: (new Date()).getTime(),
-            body: reviewText,
-            albumID: albumId,
-            albumName: album?.albumName,
-            artistName: album?.artistName,
-            userID: userInfo.id,
-          })
-        );
+        await API.graphql({
+          query: createReview,
+          variables: { input: newReview },
+          authMode: "AMAZON_COGNITO_USER_POOLS"
+        })
         console.log("Post saved successfully!");
       } catch (error) {
         console.log("Error saving post", error);

@@ -2,12 +2,26 @@ type Review @model @searchable @auth(rules: [
   { allow: public, operations: [read]}
   { allow: owner }]) {
   id: ID!
-  date: Int!
+  date: String!
   userID: String!
+  reviewerName: String
   title: String
   body: String
   rating: Int
   albumName: String
   artistName: String
   albumID: String
+}
+
+type User @model @searchable @auth(rules: [
+  { allow: public, operations: [read]}
+  { allow: owner }]) {
+  id: ID!
+  name: String!
+  userID: String!
+  pic: String
+  bio: String
+  nickname: String
+  preferredUsername: String
+  joinDate: String
 }
