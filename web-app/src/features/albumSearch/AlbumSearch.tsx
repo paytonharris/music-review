@@ -67,6 +67,7 @@ export function AlbumSearch() {
         </div>
       )
       }
+      <Link to="/reviews">Reviews</Link>
       <p>Albums</p>
       <form onSubmit={handleSubmit}>
         <input

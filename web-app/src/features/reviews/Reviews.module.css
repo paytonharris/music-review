@@ -1,0 +1,13 @@
+.review {
+  display: flex;
+  justify-content: center;
+  background-color: rgba(207, 207, 207, 0.521);
+  border-radius: 20px;
+  flex-direction: column;
+  margin: 20px;
+}
+
+p, h1, h2, h3, h4 {
+  margin: 0px;
+  padding: 0px;
+}
