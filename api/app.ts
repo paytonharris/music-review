@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import cors from "cors";
 import axios from "axios";
 import { getAlbums } from './requests/albumsRequest';
+import { getAlbumInfo } from './requests/albumInfoRequest';
 import { getBearerToken } from './requests/tokenRequest';
 
 dotenv.config();
@@ -52,6 +53,7 @@ const makeSpotifyRequest = async (request: Request, response: Response, requestF
 }
 
 app.get('/albums', (request: Request, response: Response) => makeSpotifyRequest(request, response, getAlbums));
+app.get('/albuminfo', (request: Request, response: Response) => makeSpotifyRequest(request, response, getAlbumInfo));
 app.get('/', (request: Request, response: Response) => response.status(200).send('ok'));
 
 refreshBearerToken();
