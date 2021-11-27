@@ -11,12 +11,14 @@ import { Review } from '../../models/index';
 import { selectUserInfo } from '../../authSlice';
 import { createReview } from '../../graphql/mutations';
 import { listReviews, searchReviews } from '../../graphql/queries';
+import { AlbumInfo } from '../reviews/Reviews';
 
 export function AlbumReview() {
   const { albumId } = useParams();
   const navigate = useNavigate();
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [detailedAlbumInfo, setDetailedAlbumInfo] = useState<AlbumInfo | undefined>(undefined);
   const album = useAppSelector(state => selectAlbumInfo(state, albumId ?? ""))
   const userInfo = useAppSelector(selectUserInfo);
 
@@ -64,6 +66,24 @@ export function AlbumReview() {
     const userID = user?.attributes?.sub;
     const name = user?.attributes?.name;
   }
+  
+  const getAlbumInfo = async (albumID: string) => {
+    try {
+      const url = `https://d40mp7e4qp37w.cloudfront.net/albuminfo?q=${encodeURIComponent(albumID)}`
+  
+      const response = await fetch(url);
+      let data: AlbumInfo[] = await response.json()
+      if (data && data.length > 0) {
+        console.log("got the album info")
+        console.log(JSON.stringify(data, null, 2))
+        
+        setDetailedAlbumInfo(data[0])
+      }
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     // getPreviousReviews();
@@ -71,6 +91,10 @@ export function AlbumReview() {
     getReviewsByAlbumID();
 
     getUser();
+
+    if (!album && albumId) { // album wasn't cached, so retrieve the info from the api
+      getAlbumInfo(albumId)
+    }
   }, [])
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,11 +144,11 @@ export function AlbumReview() {
   return (
     <div className={styles.main}>
       <button onClick={goBack}>{"< Albums"}</button>
-      {album && 
+      {(album || detailedAlbumInfo) && 
       <div className={styles.albumInfo}>
-        <h2>{album.artistName}</h2>
-        <h2>{album.albumName}</h2>
-        <img alt='album cover' src={album.image?.url}></img>
+        <h2>{album?.artistName || detailedAlbumInfo?.artistName}</h2>
+        <h2>{album?.albumName || detailedAlbumInfo?.albumName}</h2>
+        <img alt='album cover' src={album?.image?.url || detailedAlbumInfo?.image?.url}></img>
         <form onSubmit={handleSubmit}>
           <p>Review</p>
           <input

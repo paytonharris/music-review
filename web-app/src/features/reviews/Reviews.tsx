@@ -107,7 +107,11 @@ export function Reviews() {
                 <h3 className={styles.album}>{reviewAndInfo.review.albumName}</h3>
               </Link>
               {reviewAndInfo.review.reviewerName && 
-                <p className={styles.writer}>Review by {reviewAndInfo.review.reviewerName}</p>
+                <p className={styles.writer}>Written by {reviewAndInfo.review.reviewerName}
+                {reviewAndInfo.review.date && ` on ${(new Date(reviewAndInfo.review.date)).toLocaleDateString()}`}</p>
+              }
+              {reviewAndInfo.albumInfo?.releaseDate && 
+                <p className={styles.writer}>{`Released on ${(new Date(reviewAndInfo.albumInfo?.releaseDate)).toLocaleDateString()}`}</p>
               }
               {reviewAndInfo.review.title && <strong>{reviewAndInfo.review.title}</strong>}
               <p className={styles.body}>{reviewAndInfo.review.body}</p>
